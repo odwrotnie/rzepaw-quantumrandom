@@ -2,6 +2,8 @@
 
 Quantum Random Numbers Generator
 
+[![CQC2T Logo](http://qrng.anu.edu.au/Pictures/laser.png)](http://www.cqc2t.org)
+
 This library offers true random numbers. The random numbers are generated in [Centre for Quantum Computation and Communication Technology (CQC2T)](http://www.cqc2t.org) lab by measuring the quantum fluctuations of the vacuum.
 
 [![CQC2T Logo](http://www.cqc2t.org/themes/id-pasc/images/logo.png)](http://www.cqc2t.org)

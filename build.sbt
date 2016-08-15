@@ -1,4 +1,4 @@
-name := "SBT Hello Starter"
+name := "Quantum Random"
 
 version := "1.0"
 

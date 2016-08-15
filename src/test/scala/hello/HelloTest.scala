@@ -10,7 +10,7 @@ class QuantumRandomTest
 
   "This" should "work" in {
     (1 to 10) foreach { i =>
-      val r = QuantumRandom.nextIntegerOrNonquantum
+      val r = QuantumRandom.nextIntegerOrNonquantum()
       logger.info(s"Random number ($i): $r")
     }
   }

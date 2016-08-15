@@ -8,17 +8,14 @@ import rzepaw.quandom.QrngClient.TpeMax
 
 import scala.util.parsing.json.JSON
 
-/**
-  * https://qrng.anu.edu.au/API/api-demo.php
-  *
-  * @param length
-  */
-case class QrngClient(length: Int, tpe: TpeMax = QrngClient.UINT16)
+case class QrngClient(tpe: TpeMax = QrngClient.UINT16)
   extends LazyLogging {
 
-  val URL = s"https://qrng.anu.edu.au/API/jsonI.php?length=$length&type=${ tpe.name }"
+  val HOST = "https://qrng.anu.edu.au"
+  val PATH = "API/jsonI.php"
+  def url(length: Int) = s"$HOST/$PATH?length=$length&type=${ tpe.name }"
   val CHARSET = "UTF-8"
-  logger.debug(s"QRNG Client URL: $URL")
+  logger.debug(s"QRNG Client URL: $HOST/$PATH")
 
   private def readAll(rd: Reader): String = {
     val bufferedReader = new BufferedReader(rd)
@@ -26,8 +23,8 @@ case class QrngClient(length: Int, tpe: TpeMax = QrngClient.UINT16)
     Stream.continually(bufferedReader.readLine) takeWhile(_ != null) mkString
   }
 
-  private def readJsonFromUrl(url: String): Option[QrngResponse] = try {
-    val is: InputStream = new URL(url).openStream()
+  private def readJsonFromUrl(length: Int): Option[QrngResponse] = try {
+    val is: InputStream = new URL(url(length)).openStream()
     try {
       val rd: BufferedReader = new BufferedReader(new InputStreamReader(is, Charset.forName(CHARSET)))
       val jsonString: String = readAll(rd)
@@ -40,11 +37,11 @@ case class QrngClient(length: Int, tpe: TpeMax = QrngClient.UINT16)
     }
   } catch {
     case e: java.net.UnknownHostException =>
-      logger.error(s"Uknown host: $URL")
+      logger.error(s"Uknown host: $HOST")
       None
   }
 
-  def response: Option[QrngResponse] = readJsonFromUrl(URL)
+  def response(length: Int): Option[QrngResponse] = readJsonFromUrl(length)
 }
 
 object QrngClient {
