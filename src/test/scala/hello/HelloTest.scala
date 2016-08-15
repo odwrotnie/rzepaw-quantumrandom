@@ -2,13 +2,16 @@ package hello
 
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.FlatSpec
+import rzepaw.quandom.QuantumRandom
 
-class HelloTest
+class QuantumRandomTest
   extends FlatSpec
   with LazyLogging {
 
-  "2 plus 2" should "equal 4" in {
-    logger.info("Test")
-    assert(2 + 2 == 4)
+  "This" should "work" in {
+    (1 to 10) foreach { i =>
+      val r = QuantumRandom.nextIntegerOrNonquantum
+      logger.info(s"Random number ($i): $r")
+    }
   }
 }

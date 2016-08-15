@@ -16,7 +16,7 @@ import scala.util.parsing.json.JSON
 case class QrngClient(length: Int, tpe: TpeMax = QrngClient.UINT16)
   extends LazyLogging {
 
-  val URL = s"https://qrng.anu.edu.au/API/jsonI.php?length=$length&typex=${ tpe.name }"
+  val URL = s"https://qrng.anu.edu.au/API/jsonI.php?length=$length&type=${ tpe.name }"
   val CHARSET = "UTF-8"
   logger.debug(s"QRNG Client URL: $URL")
 
