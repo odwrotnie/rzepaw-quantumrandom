@@ -21,24 +21,29 @@ object QuantumRandom
     q ++= list
   }
 
-  def nextInteger(fresh: Boolean = false): Option[Int] = fresh match {
+  def nextInteger(n: Int = Int.MaxValue, fresh: Boolean = false): Option[Int] = fresh match {
     case true => client.response(1).flatMap(_.data.headOption)
     case false => queue.size match {
       case i if i <= 0 =>
         None
       case i if i < MIN =>
         fill(queue)
-        Some(queue.dequeue())
+        Some(queue.dequeue() % n)
       case _ =>
-        Some(queue.dequeue())
+        Some(queue.dequeue() % n)
     }
   }
 
-  def nextIntegerOrNonquantum(fresh: Boolean = false): Int = nextInteger(fresh) match {
+  def nextIntegerOrNonquantum(n: Int = Int.MaxValue, fresh: Boolean = false): Int = nextInteger(n, fresh) match {
     case Some(i) => i
     case _ =>
-      val nonquantumRandom = Random.nextInt(client.tpe.maxValue + 1)
+      val nonquantumRandom = Random.nextInt(n)
       logger.warn(s"Nonquantum random number generated - $nonquantumRandom")
       nonquantumRandom
+  }
+
+  def one[T](i: Iterable[T]): T = {
+    require(i.nonEmpty, "The iterable is empty")
+    i.toSeq(nextIntegerOrNonquantum())
   }
 }
