@@ -44,6 +44,6 @@ object QuantumRandom
 
   def one[T](i: Iterable[T]): T = {
     require(i.nonEmpty, "The iterable is empty")
-    i.toSeq(nextIntegerOrNonquantum())
+    i.toSeq(nextIntegerOrNonquantum(i.size))
   }
 }
