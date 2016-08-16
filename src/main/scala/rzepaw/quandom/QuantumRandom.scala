@@ -8,7 +8,7 @@ import scala.util.Random
 object QuantumRandom
   extends LazyLogging {
 
-  private val client = QrngClient(QrngClient.UINT16)
+  private val client = QrngClient(QrngClient.HEX16_3)
 
   private val MIN = 100
   private val MAX = 1000
@@ -37,7 +37,7 @@ object QuantumRandom
   def nextIntegerOrNonquantum(fresh: Boolean = false): Int = nextInteger(fresh) match {
     case Some(i) => i
     case _ =>
-      val nonquantumRandom = Random.nextInt(client.tpe.max + 1)
+      val nonquantumRandom = Random.nextInt(client.tpe.maxValue + 1)
       logger.warn(s"Nonquantum random number generated - $nonquantumRandom")
       nonquantumRandom
   }

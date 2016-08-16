@@ -4,17 +4,13 @@ import java.io.{InputStreamReader, InputStream, BufferedReader, Reader}
 import java.net.URL
 import java.nio.charset.Charset
 import com.typesafe.scalalogging.LazyLogging
-import rzepaw.quandom.QrngClient.TpeMax
+import rzepaw.quandom.QrngClient._
 
 import scala.util.parsing.json.JSON
 
-case class QrngClient(tpe: TpeMax = QrngClient.UINT16)
+case class QrngClient(tpe: Request = QrngClient.UINT16)
   extends LazyLogging {
 
-  val HOST = "https://qrng.anu.edu.au"
-  val PATH = "API/jsonI.php"
-  def url(length: Int) = s"$HOST/$PATH?length=$length&type=${ tpe.name }"
-  val CHARSET = "UTF-8"
   logger.debug(s"QRNG Client URL: $HOST/$PATH")
 
   private def readAll(rd: Reader): String = {
@@ -24,13 +20,16 @@ case class QrngClient(tpe: TpeMax = QrngClient.UINT16)
   }
 
   private def readJsonFromUrl(length: Int): Option[QrngResponse] = try {
-    val is: InputStream = new URL(url(length)).openStream()
+    val is: InputStream = new URL(tpe.url(length)).openStream()
     try {
       val rd: BufferedReader = new BufferedReader(new InputStreamReader(is, Charset.forName(CHARSET)))
       val jsonString: String = readAll(rd)
       logger.debug(s"HTTP Response: $jsonString")
       tpe match {
         case QrngClient.UINT16 => QrngResponse.parseUInt16(jsonString)
+        case QrngClient.HEX16_1 => QrngResponse.parseHex16(jsonString)
+        case QrngClient.HEX16_2 => QrngResponse.parseHex16(jsonString)
+        case QrngClient.HEX16_3 => QrngResponse.parseHex16(jsonString)
       }
     } finally {
       is.close()
@@ -45,6 +44,17 @@ case class QrngClient(tpe: TpeMax = QrngClient.UINT16)
 }
 
 object QrngClient {
-  case class TpeMax(name: String, max: Int)
-  val UINT16 = TpeMax("uint16", 65535)
+
+  val HOST = "https://qrng.anu.edu.au"
+  val PATH = "API/jsonI.php"
+  val CHARSET = "UTF-8"
+
+  case class Request(tpe: String, maxValue: Int, blockSize: Int = 1) {
+    def url(length: Int) = s"$HOST/$PATH?length=$length&type=$tpe&size=$blockSize"
+  }
+
+  val UINT16 = Request("uint16", 65535, 1)
+  val HEX16_1 = Request("hex16", Integer.parseInt("ff" * 1, 16), 1)
+  val HEX16_2 = Request("hex16", Integer.parseInt("ff" * 2, 16), 2)
+  val HEX16_3 = Request("hex16", Integer.parseInt("ff" * 3, 16), 3)
 }
