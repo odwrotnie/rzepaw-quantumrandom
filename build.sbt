@@ -1,4 +1,6 @@
-name := "Quantum Random"
+name := "quantum-random"
+
+organization := "it.wext"
 
 version := "1.0"
 
