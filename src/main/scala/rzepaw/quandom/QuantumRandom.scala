@@ -21,16 +21,19 @@ object QuantumRandom
     q ++= list
   }
 
-  def nextInteger(n: Int = Int.MaxValue, fresh: Boolean = false): Option[Int] = fresh match {
-    case true => client.response(1).flatMap(_.data.headOption)
-    case false => queue.size match {
-      case i if i <= 0 =>
-        None
-      case i if i < MIN =>
-        fill(queue)
-        Some(queue.dequeue() % n)
-      case _ =>
-        Some(queue.dequeue() % n)
+  def nextInteger(n: Int = Int.MaxValue, fresh: Boolean = false): Option[Int] = {
+    require(n > 0, s"The n should be > 0 (now it is: $n)")
+    fresh match {
+      case true => client.response(1).flatMap(_.data.headOption)
+      case false => queue.size match {
+        case i if i <= 0 =>
+          None
+        case i if i < MIN =>
+          fill(queue)
+          Some(queue.dequeue() % n)
+        case _ =>
+          Some(queue.dequeue() % n)
+      }
     }
   }
 

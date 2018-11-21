@@ -2,7 +2,7 @@ name := "quantum-random"
 
 organization := "it.wext"
 
-version := "1.1.5"
+version := "1.1.6"
 
 scalaVersion := "2.12.6"
 
